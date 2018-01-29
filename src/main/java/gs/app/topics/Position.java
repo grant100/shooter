@@ -9,6 +9,9 @@ public class Position {
         this.coordinate = coordinate;
     }
 
+    public String getId(){
+        return coordinate.getId();
+    }
     public Integer getX(){
         return this.coordinate.getX();
     }
