@@ -4,23 +4,43 @@ var canvas = null;
 var ctx = null;
 var bender = null;
 var id = null;
+var players = [];
+
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
 }
+
 function connect() {
-    begin();
-    var socket = new SockJS('/shooter-stomp');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/position', function (position) {
-            showPosition(JSON.parse(position.body));
+    id = $("#name").val();
+    if(id){
+        setCanvasHandler();
+        var socket = new SockJS('/shooter-stomp');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            create();
+
+             stompClient.subscribe('/queue/playerCreatedEvent',function(player){
+                 resetPlayerList(JSON.parse(player.body));
+             })
+             stompClient.subscribe('/queue/position', function (position) {
+                 update(JSON.parse(position.body));
+                 render();
+             });
         });
-    });
+    }
 }
 
+function create(){
+    stompClient.send("/app/createPlayerEvent",{},JSON.stringify({id:id,'x':512,'y':512}));
+}
+
+
+function resetPlayerList(playerList){
+    players = playerList;
+}
 function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect();
@@ -29,24 +49,47 @@ function disconnect() {
     setConnected(false);
 }
 
-function sendCoordinates(x,y) {
-    stompClient.send("/app/coordinates", {}, JSON.stringify({id:id,'x': x,'y':y}));
+function sendCoordinates(id, x, y) {
+    stompClient.send("/app/position", {}, JSON.stringify({id: id, 'x': x, 'y': y}));
 }
 
-function showPosition(message) {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    offx = bender.width/2;
-    offy = bender.height/2;
+function update(position){
+    console.log("update "+position);
+    for(var i = 0; i < players.length; i++ ){
+        var lid = players[i];
+        var pid = position.id;
+        console.log(lid.id +" "+pid);
+        if(lid.id == pid){
+            players[i] = position;
+        }
+    }
+}
+function render() {
+    //var rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.drawImage(bender,message.x - offx,message.y - offy,bender.width*.25,bender.height*.25);
-    ctx.fillText(message.id,message.x - offx,message.y - offy);
-    //$("#greetings").append("<tr><td>" + message.x +" "+ message.y+"</td></tr>");
+    for(var i = 0; i < players.length; i++ ){
+        var player = players[i];
+        x = player.x -(bender.width *.25);
+        y = player.y -(bender.height *.25);
+        ctx.drawImage(bender, x, y, bender.width * .25, bender.height * .25);
+        ctx.fillText(player.id + " "+x +" "+y, x, y);
+    }
 }
 
-function begin(){
-    id = $("#name").val();
-    $( "canvas" ).mousemove(function( event ) {
-        sendCoordinates(event.pageX,event.pageY);
+function setCanvasHandler() {
+
+    canvas.addEventListener("touchmove", function (e) {
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousemove", {
+            clientX: touch.clientX ,
+            clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+    }, false);
+
+    $("canvas").mousemove(function (event) {
+        sendCoordinates(id,event.pageX, event.pageY);
     });
 }
 
@@ -54,8 +97,13 @@ $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
+    $("#connect").click(function () {
+        connect();
+    });
+    $("#disconnect").click(function () {
+        disconnect();
+    });
+
 
     parent = document.getElementById("main");
     canvas = document.createElement("canvas");
@@ -65,5 +113,5 @@ $(function () {
     parent.appendChild(canvas);
 
     bender = new Image();
-    bender.src="/images/bender.jpg";
+    bender.src = "/images/bender.jpg";
 });
