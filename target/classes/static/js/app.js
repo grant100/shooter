@@ -5,6 +5,7 @@ var ctx = null;
 var bender = null;
 var id = null;
 var players = [];
+var player = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -112,6 +113,6 @@ $(function () {
     canvas.height = 1024;
     parent.appendChild(canvas);
 
-    bender = new Image();
-    bender.src = "/images/bender.jpg";
+    //bender = new Image();
+    //bender.src = "/images/bender.jpg";
 });
