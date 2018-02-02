@@ -25,14 +25,15 @@ Player.prototype.getId = function(){
     return this.id;
 }
 
-Player.prototype.rotatef = function(){
+Player.prototype.rotate = function(){
     ctx.clearRect(0,0,canvas.height,canvas.width);
-    ctx.save();
-    ctx.translate(this.x,this.y);        // move to x y
-    ctx.rotate((Math.PI/2) *this.delta); // rotate
-    this.img_x = -((image.width/2 *.25));
-    ctx.drawImage(image,-((image.width/2 *.25)),-(image.height/2 *.25),image.width*.25,image.height*.25); // draw image
-    ctx.restore();
+    ctx.save();                          // save original transformation
+    ctx.translate(this.x,this.y);        // move origin to x y
+    ctx.rotate((Math.PI/2) *this.delta); // rotate about x y
+
+    // since origin is x y, to center the image, i have to move the image half its height upward and half its height left
+    ctx.drawImage(image,-((image.width/2 *.25)),-(image.height/2 *.25),image.width*.25,image.height*.25);
+    ctx.restore();                       // restore transformation
 }
 
 Player.prototype.shift = function(){
