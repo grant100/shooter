@@ -1,5 +1,6 @@
 function Player(id) {
     BaseCharacter.call(this,id,512,512,20,20,8,100,"/images/shooter/shotgun/idle/Shooter_P1.png");
+    this.weapon = new Weapon(.5,1);
 }
 Player.prototype.draw = function () {
     //ctx.clearRect(0, 0, canvas.height, canvas.width);
@@ -33,6 +34,10 @@ Player.prototype.moveRight = function () {
 Player.prototype.getPoint = function(){
     return new Point(this.x,this.y,this.h,this.w);
 };
+
+Player.prototype.fire = function(){
+    return weapon.fire(new Point(this.x,this.y,this.h,this.w),new Point(mouse.x,mouse.y,this.h,this.w));
+}
 
 Player.prototype.damage = function(){
     this.l-=1;

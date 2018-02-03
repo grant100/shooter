@@ -7,6 +7,7 @@ var mouse = {
     x: null,
     y: null
 };
+var click = {x:null,y:null};
 var Key = {
     LEFT: 37,
     UP: 38,
@@ -30,6 +31,20 @@ function krs(e){
     e.preventDefault();
 }
 
+function msm(e){
+    mouse.x = e.pageX;
+    mouse.y = e.pageY;
+}
+
+function mdn(e){
+    click.x = e.pageX;
+    click.y = e.pageY;
+    console.log(click.x +" "+click.y);
+}
+
+function mup(e){
+
+}
 
 function init() {
     parent = document.getElementById("main");
@@ -51,12 +66,14 @@ function init() {
 
     enemiz.push(chaser2);
 
-    $("canvas").mousemove(function (event) {
+    /*$("canvas").mousemove(function (event) {
         mouse.x = event.pageX;
         mouse.y = event.pageY;
         //player.draw();
-    });
+    });*/
 
+    document.addEventListener('mousemove',msm,false);
+    document.addEventListener('mousedown',mdn,false);
     document.addEventListener('keydown',kps,false);
     document.addEventListener('keyup',krs,false);
 
