@@ -11,7 +11,13 @@ var Key = {
     LEFT: 37,
     UP: 38,
     RIGHT: 39,
-    DOWN: 40
+    DOWN: 40,
+    W:87,
+    S: 83,
+    A:65,
+    D : 68,
+
+    STATE:[]
 };
 
 function Player(id) {
@@ -19,7 +25,6 @@ function Player(id) {
     this.x = 512;
     this.y = 512;
     this.s = 2;
-    this.d = false;
 }
 
 Player.prototype.setX = function (x) {
@@ -48,19 +53,19 @@ Player.prototype.draw = function () {
 };
 
 Player.prototype.moveUp = function () {
-    this.y = this.y-this.s;
+    this.y -=this.s;
 }
 
 Player.prototype.moveDown = function () {
-    this.y = this.y+this.s;
+    this.y +=this.s;
 }
 
 Player.prototype.moveLeft = function () {
-    this.x = this.x-this.s;
+    this.x -=this.s;
 }
 
 Player.prototype.moveRight = function () {
-    this.x = this.x+this.s;
+    this.x +=this.s;
 }
 
 Player.prototype.shift = function(){
@@ -68,25 +73,14 @@ Player.prototype.shift = function(){
     //ctx.translate(this.x, this.y);
     ctx.drawImage(image,-((image.width / 2 * .25)),-((image.height / 2 * .25)),image.width * .25, image.height * .25);
 }
-var keyIn = []
-function kps(e){
-    keyIn[e.keyCode] = true;
 
-    if (keyIn[Key.RIGHT]) {
-        player.moveRight();
-    } else if (keyIn[Key.LEFT]) {
-        player.moveLeft();
-    } else if (keyIn[Key.UP]) {
-        player.moveUp();
-    } else if (keyIn[Key.DOWN]) {
-        player.moveDown();
-    }
+function kps(e){
+    Key.STATE[e.keyCode] = true;
     e.preventDefault();
-   // player.draw();
 };
 
 function krs(e){
-    keyIn[e.keyCode]=false;
+    Key.STATE[e.keyCode] = false;
     e.preventDefault();
 }
 function init() {
@@ -114,6 +108,20 @@ function init() {
 }
 
 function move(){
+    if(Key.STATE[Key.UP]||Key.STATE[Key.W]){
+        player.moveUp();
+    }
+
+    if(Key.STATE[Key.DOWN]||Key.STATE[Key.S]){
+        player.moveDown();
+    }
+
+    if(Key.STATE[Key.LEFT]||Key.STATE[Key.A]){
+        player.moveLeft();
+    }
+    if(Key.STATE[Key.RIGHT]||Key.STATE[Key.D]){
+        player.moveRight();
+    }
     player.draw();
 }
 
