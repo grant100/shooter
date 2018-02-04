@@ -7,64 +7,73 @@ var mouse = {
     x: null,
     y: null
 };
-var click = {x:null,y:null};
+var click = {x: null, y: null};
 var Key = {
     LEFT: 37,
     UP: 38,
     RIGHT: 39,
     DOWN: 40,
-    W:87,
+    W: 87,
     S: 83,
-    A:65,
-    D : 68,
+    A: 65,
+    D: 68,
 
-    STATE:[]
+    STATE: []
 };
 
-function kps(e){
+function kps(e) {
     Key.STATE[e.keyCode] = true;
     e.preventDefault();
 };
 
-function krs(e){
+function krs(e) {
     Key.STATE[e.keyCode] = false;
     e.preventDefault();
 }
 
-function msm(e){
+function msm(e) {
     mouse.x = e.pageX;
     mouse.y = e.pageY;
 }
 
-function mdn(e){
+var clicked = false;
+
+function mdn(e) {
+    clicked = true;
     click.x = e.pageX;
     click.y = e.pageY;
-    console.log(click.x +" "+click.y);
 }
 
+/*
 function mup(e){
 
-}
+}*/
+
+/*function mdg(e){
+     click.x = e.pageX;
+     click.y = e.pageY;
+     console.log(click.x +" "+click.y);
+}*/
 
 function init() {
     parent = document.getElementById("main");
     canvas = document.createElement("canvas");
     ctx = canvas.getContext("2d");
-    canvas.width = 1024;
-    canvas.height = 1024;
+    canvas.width = 2048;
+    canvas.height = 2048;
     parent.appendChild(canvas);
     //image = new Image();
     //image.src = "/images/bender.jpg";
 
     player = new Player('grant');
-    //var chaser1 = new Chaser('zombiz',1,.01);
-    var chaser2 = new Chaser('zombzz',1,.005);
-    //chaser1.x=0;
-    //chaser1.y=0;
-    chaser2.x=400;
-    chaser2.y=400;
+    var chaser1 = new Chaser('zombiz', 1, .01);
+    var chaser2 = new Chaser('zombzz', 1, .008);
+    chaser1.x = 0;
+    chaser1.y = 0;
+    chaser2.x = 400;
+    chaser2.y = 400;
 
-    enemiz.push(chaser2);
+    enemiz.push(chaser2, chaser1);
 
     /*$("canvas").mousemove(function (event) {
         mouse.x = event.pageX;
@@ -72,38 +81,44 @@ function init() {
         //player.draw();
     });*/
 
-    document.addEventListener('mousemove',msm,false);
-    document.addEventListener('mousedown',mdn,false);
-    document.addEventListener('keydown',kps,false);
-    document.addEventListener('keyup',krs,false);
+    document.addEventListener('mousemove', msm, false);
+    document.addEventListener('mousedown', mdn, false);
+    //document.addEventListener('mousedrag',mdg,false);
+    //document.addEventListener('mouseup',mup,false);
+    document.addEventListener('keydown', kps, false);
+    document.addEventListener('keyup', krs, false);
+
+    document.body.appendChild(canvas);
 
 }
 
-function move(){
-    if(Key.STATE[Key.UP]||Key.STATE[Key.W]){
+function move() {
+    if (Key.STATE[Key.UP] || Key.STATE[Key.W]) {
         player.moveUp();
     }
 
-    if(Key.STATE[Key.DOWN]||Key.STATE[Key.S]){
+    if (Key.STATE[Key.DOWN] || Key.STATE[Key.S]) {
         player.moveDown();
     }
 
-    if(Key.STATE[Key.LEFT]||Key.STATE[Key.A]){
+    if (Key.STATE[Key.LEFT] || Key.STATE[Key.A]) {
         player.moveLeft();
     }
-    if(Key.STATE[Key.RIGHT]||Key.STATE[Key.D]){
+    if (Key.STATE[Key.RIGHT] || Key.STATE[Key.D]) {
         player.moveRight();
     }
+
     ctx.clearRect(0, 0, canvas.height, canvas.width);
     ctx.fillStyle = 'red';
-    ctx.fillRect(player.x,player.y,player.w,player.h);
-    for(var i =0; i < enemiz.length; i++){
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+    player._d_laser();
+    for (var i = 0; i < enemiz.length; i++) {
 
         var enemy = enemiz[i];
-        ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
-        enemy.follow(player.x,player.y);
-        enemy.draw(player.x,player.y);
-        if(collisionCheck(player.getPoint(),enemy.getPoint())){
+        ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+        enemy.follow(player.x, player.y);
+        enemy.draw(player.x, player.y);
+        if (collisionCheck(player.getPoint(), enemy.getPoint())) {
             player.damage();
         };
     }
@@ -122,7 +137,7 @@ function collisionCheck(a, b) {
 
 $(function () {
     init();
-    setInterval(function(){
+    setInterval(function () {
         move();
-    },1000/80)
+    }, 1000 / 80)
 });
