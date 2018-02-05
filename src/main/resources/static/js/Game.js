@@ -2,6 +2,7 @@ var ctx;
 var parent;
 var canvas;
 var player;
+var clicked = false;
 var enemiz = [];
 var mouse = {
     x: null,
@@ -17,6 +18,8 @@ var Key = {
     S: 83,
     A: 65,
     D: 68,
+    E: 69,
+    CLICK:null,
 
     STATE: []
 };
@@ -36,24 +39,16 @@ function msm(e) {
     mouse.y = e.pageY;
 }
 
-var clicked = false;
-
 function mdn(e) {
-    clicked = true;
+    Key.CLICK = true;
     click.x = e.pageX;
     click.y = e.pageY;
 }
 
-/*
+
 function mup(e){
-
-}*/
-
-/*function mdg(e){
-     click.x = e.pageX;
-     click.y = e.pageY;
-     console.log(click.x +" "+click.y);
-}*/
+    Key.CLICK = false;
+}
 
 function init() {
     parent = document.getElementById("main");
@@ -68,12 +63,14 @@ function init() {
     player = new Player('grant');
     var chaser1 = new Chaser('zombiz', 1, .01);
     var chaser2 = new Chaser('zombzz', 1, .008);
+    var chaser3 = new Chaser('zombzz', 1, .005);
     chaser1.x = 0;
     chaser1.y = 0;
     chaser2.x = 400;
     chaser2.y = 400;
-
-    enemiz.push(chaser2, chaser1);
+    chaser3.x = 1024;
+    chaser3.y = 1024;
+    enemiz.push(chaser2, chaser1,chaser3);
 
     /*$("canvas").mousemove(function (event) {
         mouse.x = event.pageX;
@@ -84,7 +81,7 @@ function init() {
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
     //document.addEventListener('mousedrag',mdg,false);
-    //document.addEventListener('mouseup',mup,false);
+    document.addEventListener('mouseup',mup,false);
     document.addEventListener('keydown', kps, false);
     document.addEventListener('keyup', krs, false);
 
@@ -109,23 +106,35 @@ function move() {
     }
 
     ctx.clearRect(0, 0, canvas.height, canvas.width);
-    ctx.fillStyle = 'red';
-    ctx.fillRect(player.x, player.y, player.w, player.h);
+    //wctx.fillStyle = 'red';
+    //ctx.fillRect(player.x, player.y, player.w, player.h);
     player._d_laser();
+    drawEnemies();
+    if(Key.STATE[Key.E]){
+        player._a_mele();
+    }else if(Key.CLICK){
+        player._a_fire();
+    }else{
+        player._a_idle();
+    }
+
+requestAnimationFrame(move);
+
+
+}
+
+function drawEnemies(){
     for (var i = 0; i < enemiz.length; i++) {
 
         var enemy = enemiz[i];
-        ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
+        //ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
         enemy.follow(player.x, player.y);
         enemy.draw(player.x, player.y);
         if (collisionCheck(player.getPoint(), enemy.getPoint())) {
             player.damage();
         };
     }
-
-    player.draw();
 }
-
 function collisionCheck(a, b) {
     return !(
         ((a.y + a.h) < (b.y)) ||
@@ -137,7 +146,8 @@ function collisionCheck(a, b) {
 
 $(function () {
     init();
-    setInterval(function () {
+    /*setInterval(function () {
         move();
-    }, 1000 / 80)
+    }, 1000 / 60)*/
+    requestAnimationFrame(move);
 });
