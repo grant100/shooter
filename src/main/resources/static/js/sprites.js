@@ -60,7 +60,7 @@ var  RIFLE= {
         frameCount:0,
 
         tickColorCount:0,
-        ticksColorPerFrame:7,
+        ticksColorPerFrame:5,
         color:"red",
         flipColor : function () {
             if(RIFLE.FIRE.color==="red"){

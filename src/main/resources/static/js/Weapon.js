@@ -9,12 +9,15 @@ Bullet.prototype.getFPoint = function(){
 
 Bullet.prototype.getTPoint = function () {
     return this.tPoint;
-}
-Bullet.prototype.move = function(){
-    var deltax = tPoint.x - fPoint.x;
-    var deltay = tPoint.y - fPoint.y;
-    this.fPoint.x = fPoint.x + (this.coeffz*deltax);
-    this.fPoint.y = fPoint.y + (this.coeffz*deltay);
+};
+Bullet.prototype._b_draw = function(){
+    var deltax = this.tPoint.x - this.fPoint.x;
+    var deltay = this.tPoint.y - this.fPoint.y;
+
+    this.fPoint.x = this.fPoint.x + (this.rate*deltax);
+    this.fPoint.y = this.fPoint.y + (this.rate*deltay);
+    ctx.fillStyle="yellow";
+    ctx.fillRect(this.fPoint.x, this.fPoint.y, 5, 5);
 };
 
 function Weapon(rate,damage){
@@ -23,5 +26,5 @@ function Weapon(rate,damage){
 }
 
 Weapon.prototype.fire = function(fPoint,tPoint){
-    return new Bullet(fPoint,tPoint);
-}
+    bullet.push(new Bullet(fPoint,tPoint,this.rate));
+};

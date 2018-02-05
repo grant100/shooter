@@ -4,6 +4,7 @@ var canvas;
 var player;
 var clicked = false;
 var enemiz = [];
+var bullet = [];
 var mouse = {
     x: null,
     y: null
@@ -50,6 +51,12 @@ function mup(e){
     Key.CLICK = false;
 }
 
+function drawBullets(){
+    for(var i = 0; i < bullet.length; i++){
+        var b_bullet = bullet[i];
+        b_bullet._b_draw();
+    }
+}
 function init() {
     parent = document.getElementById("main");
     canvas = document.createElement("canvas");
@@ -108,15 +115,20 @@ function move() {
     ctx.clearRect(0, 0, canvas.height, canvas.width);
     //wctx.fillStyle = 'red';
     //ctx.fillRect(player.x, player.y, player.w, player.h);
+    drawBullets();
     player._d_laser();
     drawEnemies();
     if(Key.STATE[Key.E]){
         player._a_mele();
     }else if(Key.CLICK){
-        player._a_fire();
+        player.fire();
+
+        // recoil animation
+        player._a_recl();
     }else{
         player._a_idle();
     }
+
 
 requestAnimationFrame(move);
 

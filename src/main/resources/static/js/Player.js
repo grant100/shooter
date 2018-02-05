@@ -1,6 +1,6 @@
 function Player(id) {
     BaseCharacter.call(this, id, 512, 512, 20, 20, 8, 100, RIFLE.IDLE[0]);
-    this.weapon = new Weapon(.5, 1);
+    this.weapon = new Weapon(.09, 1);
 }
 
 Player.prototype._d_draw = function () {
@@ -14,6 +14,7 @@ Player.prototype._d_draw = function () {
     // since origin is x y, to center the image, i have to move the image half its height upward and half its height left
     ctx.drawImage(this.image, -((this.image.width / 2 * .5)), -(this.image.height / 2 * .5), this.image.width * .5, this.image.height * .5);
     ctx.restore();                       // restore transformation
+
 };
 
 Player.prototype.moveUp = function () {
@@ -37,7 +38,7 @@ Player.prototype.getPoint = function () {
 };
 
 Player.prototype.fire = function () {
-    return weapon.fire(new Point(this.x, this.y, this.h, this.w), new Point(mouse.x, mouse.y, this.h, this.w));
+    this.weapon.fire(this.getPoint(), new Point(mouse.x, mouse.y, this.h, this.w),this.weapon.rate);
 }
 
 Player.prototype.damage = function () {
@@ -75,7 +76,7 @@ Player.prototype._a_mele = function () {
     this.image.src = RIFLE.MELE.FRAME[RIFLE.MELE.frameCount];
     this._d_draw();
 };
-Player.prototype._a_fire = function () {
+Player.prototype._a_recl = function () {
 
     RIFLE.FIRE.tickCount += 1;
     if (RIFLE.FIRE.tickCount > RIFLE.FIRE.ticksPerFrame) {
