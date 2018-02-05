@@ -11,11 +11,16 @@ Bullet.prototype.getTPoint = function () {
     return this.tPoint;
 };
 Bullet.prototype._b_draw = function(){
+
+    // normalize vector
+
     var deltax = this.tPoint.x - this.fPoint.x;
     var deltay = this.tPoint.y - this.fPoint.y;
 
-    this.fPoint.x = this.fPoint.x + (this.rate*deltax);
-    this.fPoint.y = this.fPoint.y + (this.rate*deltay);
+    var distance = Math.sqrt((deltax*deltax)+(deltay*deltay));
+
+    this.fPoint.x +=deltax/distance * this.rate;//this.fPoint.x + (this.rate*deltax);
+    this.fPoint.y +=deltay/distance * this.rate;//this.fPoint.y + (this.rate*deltay);
     ctx.fillStyle="yellow";
     ctx.fillRect(this.fPoint.x, this.fPoint.y, 5, 5);
 };

@@ -1,6 +1,6 @@
 function Player(id) {
     BaseCharacter.call(this, id, 512, 512, 20, 20, 8, 100, RIFLE.IDLE[0]);
-    this.weapon = new Weapon(.09, 1);
+    this.weapon = new Weapon(30, 1);
 }
 
 Player.prototype._d_draw = function () {
