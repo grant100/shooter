@@ -4,7 +4,6 @@ function Player(id) {
 }
 
 Player.prototype._d_draw = function (px,py,mx,my) {
-    //ctx.clearRect(0, 0, canvas.height, canvas.width);
     ctx.save();                          // save original transformation
     ctx.translate(px, py);        // move origin to x y
 
@@ -15,6 +14,21 @@ Player.prototype._d_draw = function (px,py,mx,my) {
     ctx.drawImage(this.image, -((this.image.width / 2 * .5)), -(this.image.height / 2 * .5), this.image.width * .5, this.image.height * .5);
     ctx.restore();                       // restore transformation
 
+};
+Player.prototype.moveUp = function (s) {
+    this.y -= s;
+};
+
+Player.prototype.moveDown = function (s) {
+    this.y += s;
+};
+
+Player.prototype.moveLeft = function (s) {
+    this.x -= s;
+};
+
+Player.prototype.moveRight = function (s) {
+    this.x += s;
 };
 
 
@@ -37,7 +51,7 @@ Player.prototype._a_idle = function (px,py,mx,my) {
     this.image.src = RIFLE.IDLE.FRAME[RIFLE.IDLE.frameCount];
     this._d_draw(px,py,mx,my);
 };
-Player.prototype._a_mele = function () {
+Player.prototype._a_mele = function (px,py,mx,my)  {
     RIFLE.MELE.tickCount += 1;
     if (RIFLE.MELE.tickCount > RIFLE.MELE.ticksPerFrame) {
         RIFLE.MELE.tickCount = 0;
@@ -47,9 +61,9 @@ Player.prototype._a_mele = function () {
         }
     }
     this.image.src = RIFLE.MELE.FRAME[RIFLE.MELE.frameCount];
-    this._d_draw();
+    this._d_draw(px,py,mx,my);
 };
-Player.prototype._a_recl = function () {
+Player.prototype._a_recl = function (px,py,mx,my)  {
 
     RIFLE.FIRE.tickCount += 1;
     if (RIFLE.FIRE.tickCount > RIFLE.FIRE.ticksPerFrame) {
@@ -60,20 +74,20 @@ Player.prototype._a_recl = function () {
         }
     }
     this.image.src = RIFLE.FIRE.FRAME[RIFLE.FIRE.frameCount];
-    this._a_bult();
-    this._d_draw();
+    this._a_bult(px,py,mx,my);
+    this._d_draw(px,py,mx,my);
 
 };
 
-Player.prototype._a_bult = function () {
+Player.prototype._a_bult = function (px,py,mx,my) {
     RIFLE.FIRE.tickColorCount+=1;
     if(RIFLE.FIRE.tickColorCount>RIFLE.FIRE.ticksColorPerFrame){
         RIFLE.FIRE.tickColorCount=0;
         RIFLE.FIRE.flipColor();
     }
     ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(mouse.x, mouse.y);
+    ctx.moveTo(px.x, py.y);
+    ctx.lineTo(mx, my);
     ctx.strokeStyle = RIFLE.FIRE.color;
     ctx.stroke();
 };

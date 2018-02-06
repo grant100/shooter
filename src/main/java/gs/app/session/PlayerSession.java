@@ -3,18 +3,22 @@ package gs.app.session;
 import gs.app.messages.Input;
 
 public class PlayerSession {
-    Integer playerX = 2048 / 2;
-    Integer playerY = 2048 / 2;
+    Integer x = 1024 / 2;
+    Integer y = 1024 / 2;
+    Integer height = 10;
+    Integer width = 10;
     Integer mouseX;
     Integer mouseY;
     Integer clickX;
     Integer clickY;
-    Integer speed = 3;
+    Boolean melee;
+    Boolean click;
+    Boolean collision;
+    Integer speed = 5;
     String id;
-    private Input input;
-    //String avatar = "/images/shooter/rifle/idle/survivor-idle_rifle_0.png";
 
-    //public PlayerSession(){}
+
+    private Input input;
     public PlayerSession(String id) {
         this.id = id;
     }
@@ -30,12 +34,12 @@ public class PlayerSession {
         return this.input;
     }
 
-    public Integer getPlayerX(){
-        return this.playerX;
+    public Integer getX(){
+        return this.x;
     }
 
-    public Integer getPlayerY() {
-        return playerY;
+    public Integer getY() {
+        return this.y;
     }
 
     public Integer getMouseY() {
@@ -54,32 +58,51 @@ public class PlayerSession {
         return clickX;
     }
 
+    public Boolean getMelee() {
+        return melee;
+    }
+
+    public Boolean getClick(){
+        return this.click;
+    }
+
+    public Boolean getCollision(){
+        return this.collision;
+    }
+
     public void setInput(Input input) {
         this.input = input;
+    }
+
+    public void setCollision(Boolean collision){
+        this.collision = collision;
     }
 
     public void process() {
         this.mouseX = input.getMouseX();
         this.mouseY = input.getMouseY();
+        this.melee = input.getMelee();
+        this.click = input.getClick();
 
-        if (input.getUp()) {
-            this.playerY -= 1 * speed;
-        }
-        if (input.getDown()) {
-            this.playerY += 1*speed;
-        }
-        if (input.getLeft()) {
-            this.playerX -= 1*speed;
-        }
-        if (input.getRight()) {
-            this.playerX += 1 *speed;
-        }
         if (input.getClick()) {
             this.clickX = input.getClickX();
             this.clickY = input.getClickY();
         }
-        if (input.getMelee()) {
-            // melee
+
+        if(input.getUp()){
+            this.y-=speed;
+        }
+
+        if(input.getDown()){
+            this.y+=speed;
+        }
+
+        if(input.getLeft()){
+            this.x-=speed;
+        }
+
+        if(input.getRight()){
+            this.x+=speed;
         }
     }
 }

@@ -2,9 +2,11 @@ var stompClient = null;
 var stompConnct = false;
 var ctx = null;
 var id = null;
+var chaser = null;
 var player = null;
 var initialized = false;
 var positionUpdates = null;
+var enemyUpdates = null;
 var mouse = {
     x: null,
     y: null
@@ -36,17 +38,24 @@ function connect() {
     if (id) {
         if (!initialized) {
             init();
-            window.requestAnimationFrame(render);
             var socket = new SockJS('/game-stomp');
             stompClient = Stomp.over(socket);
         }
         stompClient.connect({}, function (frame) {
+            console.log("REACHED");
             setConnected(true);
-            stompClient.subscribe('/queue/position-updates', function (updates) {
-                positionUpdates = JSON.parse(updates.body);
-                //render(JSON.parse(positionUpdates.body));
+            stompClient.subscribe('/topic/position-updates', function (updates) {
+                positionUpdates = JSON.parse(updates.body)
+                //requestAnimationFrame(render(JSON.parse(updates.body)));
+            });
+
+            stompClient.subscribe('/topic/enemy-updates', function (updates) {
+                enemyUpdates = JSON.parse(updates.body)
+                //requestAnimationFrame(render(JSON.parse(updates.body)));
             });
         });
+
+
     }
 }
 
@@ -59,13 +68,13 @@ function disconnect() {
     setConnected(false);
 }
 
-function playerInput(up, down, left, right, melee, click, mouseX, mouseY, clickX, clickY) {
+function playerInput(up,down,left,right,melee, click, mouseX, mouseY, clickX, clickY) {
     if (stompConnct) {
         stompClient.send("/app/position-updates", {}, JSON.stringify({
-            'up': up
-            , 'down': down
-            , 'left': left
-            , 'right': right
+              'up':up
+            , 'down':down
+            , 'left':left
+            , 'right':right
             , 'melee': melee
             , 'click': click
             , 'mouseX': mouseX
@@ -80,41 +89,36 @@ function playerInput(up, down, left, right, melee, click, mouseX, mouseY, clickX
 function kps(e) {
     Key.STATE[e.keyCode] = true;
     e.preventDefault();
-    move();
 };
 
 function krs(e) {
     Key.STATE[e.keyCode] = false;
     e.preventDefault();
-    move();
 }
 
 function msm(e) {
     var rect = canvas.getBoundingClientRect();
     mouse.x = e.pageX - rect.left;
     mouse.y = e.pageY - rect.top;
-    move();
 }
 
 function mdn(e) {
     Key.CLICK = true;
     click.x = e.pageX;
     click.y = e.pageY;
-    move();
 }
 
 
 function mup(e) {
     Key.CLICK = false;
-    move();
 }
 
 function init() {
     parent = document.getElementById("main");
     canvas = document.createElement("canvas");
     ctx = canvas.getContext("2d");
-    canvas.width = 2048;
-    canvas.height = 2048;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     parent.appendChild(canvas);
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
@@ -124,24 +128,43 @@ function init() {
     document.body.appendChild(canvas);
 
     player = new Player('grant');
-    Key.STATE[Key.W] = false;
-    Key.STATE[Key.S] = false;
-    Key.STATE[Key.A] = false;
-    Key.STATE[Key.D] = false;
+    chaser = new Chaser('model');
 
     Key.STATE[Key.UP] = false;
     Key.STATE[Key.DOWN] = false;
     Key.STATE[Key.LEFT] = false;
     Key.STATE[Key.RIGHT] = false;
-
+    Key.STATE[Key.W] = false;
+    Key.STATE[Key.S] = false;
+    Key.STATE[Key.A] = false;
+    Key.STATE[Key.D] = false;
     Key.CLICK = false;
     Key.STATE[Key.E] = false;
 
+    requestAnimationFrame(render);
 }
 
 function move() {
+
+    if (Key.STATE[Key.UP] || Key.STATE[Key.W]) {
+        player.moveUp(positionUpdates.speed);
+    }
+
+    if (Key.STATE[Key.DOWN] || Key.STATE[Key.S]) {
+        player.moveDown(positionUpdates.speed);
+    }
+
+    if (Key.STATE[Key.LEFT] || Key.STATE[Key.A]) {
+        player.moveLeft(positionUpdates.speed);
+    }
+    if (Key.STATE[Key.RIGHT] || Key.STATE[Key.D]) {
+        player.moveRight(positionUpdates.speed);
+    }
+
+
+
     playerInput(
-        Key.STATE[Key.UP] || Key.STATE[Key.W]
+          Key.STATE[Key.UP] || Key.STATE[Key.W]
         , Key.STATE[Key.DOWN] || Key.STATE[Key.S]
         , Key.STATE[Key.LEFT] || Key.STATE[Key.A]
         , Key.STATE[Key.RIGHT] || Key.STATE[Key.D]
@@ -153,14 +176,35 @@ function move() {
         , click.y);
 }
 
-function render() {
-    console.log(positionUpdates);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    player._d_laser(positionUpdates.playerX, positionUpdates.playerY, positionUpdates.mouseX, positionUpdates.mouseY);
-    player._a_idle(positionUpdates.playerX, positionUpdates.playerY, positionUpdates.mouseX, positionUpdates.mouseY);
-    //player._d_draw(pu.playerX,pu.playerY,pu.mouseX,pu.mouseY)
 
-    window.requestAnimationFrame(render);
+function drawEnemies(){
+    for (var i = 0; i < enemyUpdates.length; i++) {
+
+        var enemy = enemyUpdates[i];
+        chaser.draw(enemy.x,enemy.y,positionUpdates.x, positionUpdates.y);
+    }
+}
+
+
+function render() {
+    move();
+    if(positionUpdates){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        player._d_laser(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
+        drawEnemies();
+        if(positionUpdates.melee){
+            player._a_mele(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
+        }else if(positionUpdates.click){
+            //player.fire(player.x, player.y, positionUpdates.mouseX, positionUpdates.mouseY);
+
+            // recoil animation
+            player._a_recl(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
+        }else{
+            player._a_idle(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
+        }
+
+    }
+    requestAnimationFrame(render);
 }
 
 $(function () {

@@ -1,7 +1,9 @@
 package gs.app.controllers;
 
 import gs.app.messages.Input;
+import gs.app.session.GameUtil;
 import gs.app.session.PlayerSession;
+import gs.app.session.Zombie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +25,7 @@ import java.util.List;
 public class GameController {
 
     List<PlayerSession> playerSessions = new ArrayList<>();
+    List<Zombie> zombies = new ArrayList<>();
     @RequestMapping("/")
     public String index(){
         return "index.html";
@@ -31,12 +34,25 @@ public class GameController {
     @Autowired
     public SimpMessageSendingOperations messagingTemplate;
 
+    /*@SendTo("/topic/enemy-updates")
+    public List<Zombie> enemyUpdates(){
+        return zombies;
+    }*/
+
     @MessageMapping("/position-updates")
-    @SendTo("/queue/position-updates")
+    @SendTo("/topic/position-updates")
     public PlayerSession positionUpdates(Input input,SimpMessageHeaderAccessor accessor) throws Exception {
       PlayerSession player = (PlayerSession)accessor.getSessionAttributes().get("PlayerSession");
       player.setInput(input);
       player.process();
+
+      GameUtil.generateZombie(zombies);
+      Zombie.setChase(zombies, player);
+      messagingTemplate.convertAndSend("/topic/enemy-updates",zombies);
+
+      //enemyUpdates();
+      player.setCollision(GameUtil.collisionCheck(player,zombies));
+
       return player;
     }
 
