@@ -1,7 +1,10 @@
 var stompClient = null;
+var stompConnct = false;
 var ctx = null;
 var id = null;
-
+var player = null;
+var initialized = false;
+var positionUpdates = null;
 var mouse = {
     x: null,
     y: null
@@ -17,7 +20,7 @@ var Key = {
     A: 65,
     D: 68,
     E: 69,
-    CLICK:null,
+    CLICK: null,
 
     STATE: []
 };
@@ -25,34 +28,28 @@ var Key = {
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
+    stompConnct = connected
 }
 
 function connect() {
     id = $("#name").val();
-    if(id){
-        var socket = new SockJS('/game-stomp');
-        stompClient = Stomp.over(socket);
+    if (id) {
+        if (!initialized) {
+            init();
+            window.requestAnimationFrame(render);
+            var socket = new SockJS('/game-stomp');
+            stompClient = Stomp.over(socket);
+        }
         stompClient.connect({}, function (frame) {
             setConnected(true);
-            //console.log('Connected: ' + frame);
-            init();
-            requestAnimationFrame(move);
-            //create();
-            /* stompClient.subscribe('/queue/player-joined',function(player){
-                 //resetPlayerList(JSON.parse(player.body));
-             });*/
-             stompClient.subscribe('/queue/position-updates', function (updates) {
-                 console.log(JSON.parse(updates.body));
-                 //update(JSON.parse(position.body));
-                 //render();
-             });
+            stompClient.subscribe('/queue/position-updates', function (updates) {
+                positionUpdates = JSON.parse(updates.body);
+                //render(JSON.parse(positionUpdates.body));
+            });
         });
     }
 }
 
-function create(){
-    stompClient.send("/app/player-create",{},JSON.stringify({id:id,'x':512,'y':512}));
-}
 
 function disconnect() {
     if (stompClient !== null) {
@@ -62,35 +59,54 @@ function disconnect() {
     setConnected(false);
 }
 
-function playerInput(id,up,down,left,right,melee,click) {
-    stompClient.send("/app/position-updates", {}, JSON.stringify({'up': up, 'down': down,'left':left,'right':right,'melee':melee,'click':click}));
+function playerInput(up, down, left, right, melee, click, mouseX, mouseY, clickX, clickY) {
+    if (stompConnct) {
+        stompClient.send("/app/position-updates", {}, JSON.stringify({
+            'up': up
+            , 'down': down
+            , 'left': left
+            , 'right': right
+            , 'melee': melee
+            , 'click': click
+            , 'mouseX': mouseX
+            , 'mouseY': mouseY
+            , 'clickX': clickX
+            , 'clickY': clickY
+        }));
+    }
 }
 
 
 function kps(e) {
     Key.STATE[e.keyCode] = true;
     e.preventDefault();
+    move();
 };
 
 function krs(e) {
     Key.STATE[e.keyCode] = false;
     e.preventDefault();
+    move();
 }
 
 function msm(e) {
-    mouse.x = e.pageX;
-    mouse.y = e.pageY;
+    var rect = canvas.getBoundingClientRect();
+    mouse.x = e.pageX - rect.left;
+    mouse.y = e.pageY - rect.top;
+    move();
 }
 
 function mdn(e) {
     Key.CLICK = true;
     click.x = e.pageX;
     click.y = e.pageY;
+    move();
 }
 
 
-function mup(e){
+function mup(e) {
     Key.CLICK = false;
+    move();
 }
 
 function init() {
@@ -102,10 +118,12 @@ function init() {
     parent.appendChild(canvas);
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
-    document.addEventListener('mouseup',mup,false);
+    document.addEventListener('mouseup', mup, false);
     document.addEventListener('keydown', kps, false);
     document.addEventListener('keyup', krs, false);
     document.body.appendChild(canvas);
+
+    player = new Player('grant');
     Key.STATE[Key.W] = false;
     Key.STATE[Key.S] = false;
     Key.STATE[Key.A] = false;
@@ -116,17 +134,34 @@ function init() {
     Key.STATE[Key.LEFT] = false;
     Key.STATE[Key.RIGHT] = false;
 
-    Key.CLICK=false;
+    Key.CLICK = false;
     Key.STATE[Key.E] = false;
 
 }
 
 function move() {
-    playerInput(id,Key.STATE[Key.UP]||Key.STATE[Key.W],Key.STATE[Key.DOWN]||Key.STATE[Key.S],Key.STATE[Key.LEFT]||Key.STATE[Key.A],Key.STATE[Key.RIGHT]||Key.STATE[Key.D],Key.STATE[Key.E],Key.CLICK);
-    window.requestAnimationFrame(move);
+    playerInput(
+        Key.STATE[Key.UP] || Key.STATE[Key.W]
+        , Key.STATE[Key.DOWN] || Key.STATE[Key.S]
+        , Key.STATE[Key.LEFT] || Key.STATE[Key.A]
+        , Key.STATE[Key.RIGHT] || Key.STATE[Key.D]
+        , Key.STATE[Key.E]
+        , Key.CLICK
+        , mouse.x
+        , mouse.y
+        , click.x
+        , click.y);
 }
 
+function render() {
+    console.log(positionUpdates);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    player._d_laser(positionUpdates.playerX, positionUpdates.playerY, positionUpdates.mouseX, positionUpdates.mouseY);
+    player._a_idle(positionUpdates.playerX, positionUpdates.playerY, positionUpdates.mouseX, positionUpdates.mouseY);
+    //player._d_draw(pu.playerX,pu.playerY,pu.mouseX,pu.mouseY)
 
+    window.requestAnimationFrame(render);
+}
 
 $(function () {
     $("form").on('submit', function (e) {
