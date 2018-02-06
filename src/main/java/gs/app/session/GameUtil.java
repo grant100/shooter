@@ -1,6 +1,9 @@
 package gs.app.session;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameUtil {
     public static void generateZombie(List<Zombie> zombies){
@@ -27,5 +30,15 @@ public class GameUtil {
                   ((player.x + player.width) < zombie.x) ||
                   (player.x > (zombie.x + zombie.width))
         );
+    }
+
+    public static List excludePlayer(List<PlayerSession> players, PlayerSession player){
+        List<PlayerSession> teamList = new ArrayList<>();
+        for(PlayerSession teamPlayer : players){
+            if(!teamPlayer.getId().equals(player.getId())){
+                teamList.add(teamPlayer);
+            }
+        }
+        return teamList;
     }
 }

@@ -17,15 +17,19 @@ import org.springframework.web.filter.RequestContextFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @SessionAttributes("PlayerSession")
 @RequestMapping
 public class GameController {
 
-    List<PlayerSession> playerSessions = new ArrayList<>();
+
+    ArrayList<PlayerSession> playerSessions = new ArrayList<>();
     List<Zombie> zombies = new ArrayList<>();
+
     @RequestMapping("/")
     public String index(){
         return "index.html";
@@ -34,11 +38,6 @@ public class GameController {
     @Autowired
     public SimpMessageSendingOperations messagingTemplate;
 
-    /*@SendTo("/topic/enemy-updates")
-    public List<Zombie> enemyUpdates(){
-        return zombies;
-    }*/
-
     @MessageMapping("/position-updates")
     @SendTo("/topic/position-updates")
     public PlayerSession positionUpdates(Input input,SimpMessageHeaderAccessor accessor) throws Exception {
@@ -46,11 +45,12 @@ public class GameController {
       player.setInput(input);
       player.process();
 
+      // TODO refine game mechanics
       GameUtil.generateZombie(zombies);
-      Zombie.setChase(zombies, player);
+      Zombie.setChase(zombies, playerSessions);
       messagingTemplate.convertAndSend("/topic/enemy-updates",zombies);
-
-      //enemyUpdates();
+      List teamList = GameUtil.excludePlayer(playerSessions,player);
+      messagingTemplate.convertAndSend("/topic/team-updates",teamList);
       player.setCollision(GameUtil.collisionCheck(player,zombies));
 
       return player;
@@ -58,7 +58,7 @@ public class GameController {
 
     @ModelAttribute("PlayerSession")
     public PlayerSession getPlayer(HttpServletRequest request){
-        PlayerSession player = new PlayerSession(request.getRequestedSessionId());
+        PlayerSession player = new PlayerSession(request.getSession().getId());
         playerSessions.add(player);
         return player;
     }

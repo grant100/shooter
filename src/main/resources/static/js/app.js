@@ -7,6 +7,7 @@ var player = null;
 var initialized = false;
 var positionUpdates = null;
 var enemyUpdates = null;
+var teamUpdates = null;
 var mouse = {
     x: null,
     y: null
@@ -51,6 +52,11 @@ function connect() {
 
             stompClient.subscribe('/topic/enemy-updates', function (updates) {
                 enemyUpdates = JSON.parse(updates.body)
+                //requestAnimationFrame(render(JSON.parse(updates.body)));
+            });
+
+            stompClient.subscribe('/topic/team-updates', function (updates) {
+                teamUpdates = JSON.parse(updates.body)
                 //requestAnimationFrame(render(JSON.parse(updates.body)));
             });
         });
@@ -185,12 +191,21 @@ function drawEnemies(){
     }
 }
 
+function drawTeam(){
+    for (var i = 0; i < teamUpdates.length; i++) {
+        var member = teamUpdates[i];
+        drawPlayer(member);
+    }
+}
 
 function render() {
     move();
     if(positionUpdates){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        player._d_laser(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
+        drawEnemies();
+        drawTeam()
+        drawPlayer(positionUpdates);
+        /*player._d_laser(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
         drawEnemies();
         if(positionUpdates.melee){
             player._a_mele(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
@@ -201,12 +216,25 @@ function render() {
             player._a_recl(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
         }else{
             player._a_idle(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
-        }
+        }*/
 
     }
     requestAnimationFrame(render);
 }
 
+function drawPlayer(args){
+    player._d_laser(args.x, args.y, args.mouseX, args.mouseY);
+    if(args.melee){
+        player._a_mele(args.x, args.y, args.mouseX, args.mouseY);
+    }else if(args.click){
+        //player.fire(player.x, player.y, positionUpdates.mouseX, positionUpdates.mouseY);
+
+        // recoil animation
+        player._a_recl(args.x, args.y,args.mouseX, args.mouseY);
+    }else{
+        player._a_idle(args.x, args.y,args.mouseX, args.mouseY);
+    }
+}
 $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
