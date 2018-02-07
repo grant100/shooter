@@ -7,10 +7,10 @@ public class Input {
     private Boolean right;
     private Boolean melee;
     private Boolean click;
-    private Integer mouseX;
-    private Integer mouseY;
-    private Integer clickX;
-    private Integer clickY;
+    private Double mouseX;
+    private Double mouseY;
+    private Double clickX;
+    private Double clickY;
 
     public Input() {
     }
@@ -42,19 +42,19 @@ public class Input {
         return click;
     }
 
-    public Integer getMouseX() {
+    public Double getMouseX() {
         return mouseX;
     }
 
-    public Integer getMouseY() {
+    public Double getMouseY() {
         return mouseY;
     }
 
-    public Integer getClickX() {
+    public Double getClickX() {
         return clickX;
     }
 
-    public Integer getClickY() {
+    public Double getClickY() {
         return clickY;
     }
 
@@ -82,19 +82,19 @@ public class Input {
         this.click = click;
     }
 
-    public void setMouseX(Integer mouseX) {
+    public void setMouseX(Double mouseX) {
         this.mouseX = mouseX;
     }
 
-    public void setMouseY(Integer mouseY) {
+    public void setMouseY(Double mouseY) {
         this.mouseY = mouseY;
     }
 
-    public void setClickX(Integer clickX) {
+    public void setClickX(Double clickX) {
         this.clickX = clickX;
     }
 
-    public void setClickY(Integer clickY) {
+    public void setClickY(Double clickY) {
         this.clickY = clickY;
     }
 

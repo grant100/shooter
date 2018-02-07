@@ -41,4 +41,13 @@ public class GameUtil {
         }
         return teamList;
     }
+
+    public static List getBullets(List<PlayerSession> players){
+        List<Bullet> bullets = new ArrayList<>();
+        for(PlayerSession player : players){
+            bullets.addAll(player.getBullets());
+        }
+
+        return bullets;
+    }
 }

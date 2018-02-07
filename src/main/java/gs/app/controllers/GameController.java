@@ -1,6 +1,7 @@
 package gs.app.controllers;
 
 import gs.app.messages.Input;
+import gs.app.session.Bullet;
 import gs.app.session.GameUtil;
 import gs.app.session.PlayerSession;
 import gs.app.session.Zombie;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.filter.RequestContextFilter;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.management.BufferPoolMXBean;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +53,8 @@ public class GameController {
       messagingTemplate.convertAndSend("/topic/enemy-updates",zombies);
       List teamList = GameUtil.excludePlayer(playerSessions,player);
       messagingTemplate.convertAndSend("/topic/team-updates",teamList);
+      List<Bullet> bullets = GameUtil.getBullets(playerSessions);
+        messagingTemplate.convertAndSend("/topic/bullet-updates",bullets);
       player.setCollision(GameUtil.collisionCheck(player,zombies));
 
       return player;

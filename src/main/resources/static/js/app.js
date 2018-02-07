@@ -1,13 +1,19 @@
 var stompClient = null;
 var stompConnct = false;
+var parent = null;
+var canvas = null;
+var canvas2 = null;
 var ctx = null;
+var buffer = null;
 var id = null;
 var chaser = null;
 var player = null;
+var bullet = null;
 var initialized = false;
 var positionUpdates = null;
 var enemyUpdates = null;
 var teamUpdates = null;
+var bulletUpdates = null;
 var mouse = {
     x: null,
     y: null
@@ -57,6 +63,11 @@ function connect() {
 
             stompClient.subscribe('/topic/team-updates', function (updates) {
                 teamUpdates = JSON.parse(updates.body)
+                //requestAnimationFrame(render(JSON.parse(updates.body)));
+            });
+
+            stompClient.subscribe('/topic/bullet-updates', function (updates) {
+                bulletUpdates = JSON.parse(updates.body)
                 //requestAnimationFrame(render(JSON.parse(updates.body)));
             });
         });
@@ -123,18 +134,26 @@ function init() {
     parent = document.getElementById("main");
     canvas = document.createElement("canvas");
     ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = 2048;
+    canvas.height = 2048;
     parent.appendChild(canvas);
+
+
+    canvas2 = document.createElement("canvas");
+    buffer = canvas.getContext("2d");
+    canvas2.width = canvas.width;
+    canvas2.height = canvas.height;
+
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
     document.addEventListener('mouseup', mup, false);
     document.addEventListener('keydown', kps, false);
     document.addEventListener('keyup', krs, false);
-    document.body.appendChild(canvas);
+    //document.body.appendChild(canvas);
 
     player = new Player('grant');
     chaser = new Chaser('model');
+    bullet = new Bullet();
 
     Key.STATE[Key.UP] = false;
     Key.STATE[Key.DOWN] = false;
@@ -185,9 +204,8 @@ function move() {
 
 function drawEnemies(){
     for (var i = 0; i < enemyUpdates.length; i++) {
-
         var enemy = enemyUpdates[i];
-        chaser.draw(enemy.x,enemy.y,positionUpdates.x, positionUpdates.y);
+        chaser.draw(enemy.x,enemy.y,enemy.targetX, enemy.targetY);
     }
 }
 
@@ -198,26 +216,21 @@ function drawTeam(){
     }
 }
 
+function drawBullets(){
+    for (var i = 0; i < bulletUpdates.length; i++) {
+        var b = bulletUpdates[i];
+        bullet._b_draw(b.fx,b.fy,5,5);
+    }
+}
 function render() {
     move();
     if(positionUpdates){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawEnemies();
-        drawTeam()
+        drawBullets();
+        drawTeam();
         drawPlayer(positionUpdates);
-        /*player._d_laser(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
-        drawEnemies();
-        if(positionUpdates.melee){
-            player._a_mele(positionUpdates.x, positionUpdates.y, positionUpdates.mouseX, positionUpdates.mouseY);
-        }else if(positionUpdates.click){
-            //player.fire(player.x, player.y, positionUpdates.mouseX, positionUpdates.mouseY);
-
-            // recoil animation
-            player._a_recl(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
-        }else{
-            player._a_idle(positionUpdates.x, positionUpdates.y,positionUpdates.mouseX, positionUpdates.mouseY);
-        }*/
-
+        ctx.drawImage(canvas2,0,0);
     }
     requestAnimationFrame(render);
 }
@@ -229,7 +242,6 @@ function drawPlayer(args){
     }else if(args.click){
         //player.fire(player.x, player.y, positionUpdates.mouseX, positionUpdates.mouseY);
 
-        // recoil animation
         player._a_recl(args.x, args.y,args.mouseX, args.mouseY);
     }else{
         player._a_idle(args.x, args.y,args.mouseX, args.mouseY);
@@ -245,7 +257,4 @@ $(function () {
     $("#disconnect").click(function () {
         disconnect();
     });
-
-    //init();
-
 });

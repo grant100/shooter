@@ -4,15 +4,15 @@ function Player(id) {
 }
 
 Player.prototype._d_draw = function (px,py,mx,my) {
-    ctx.save();                          // save original transformation
-    ctx.translate(px, py);        // move origin to x y
+    buffer.save();                          // save original transformation
+    buffer.translate(px, py);        // move origin to x y
 
     // get xy in relation to origin, calc arc tangent, then flip
-    ctx.rotate(Math.atan2(py - my, px - mx) - Math.PI / 2);
+    buffer.rotate(Math.atan2(py - my, px - mx) - Math.PI / 2);
 
     // since origin is x y, to center the image, i have to move the image half its height upward and half its height left
-    ctx.drawImage(this.image, -((this.image.width / 2 * .5)), -(this.image.height / 2 * .5), this.image.width * .5, this.image.height * .5);
-    ctx.restore();                       // restore transformation
+    buffer.drawImage(this.image, -((this.image.width / 2 * .5)), -(this.image.height / 2 * .5), this.image.width * .5, this.image.height * .5);
+    buffer.restore();                       // restore transformation
 
 };
 Player.prototype.moveUp = function (s) {
@@ -33,11 +33,11 @@ Player.prototype.moveRight = function (s) {
 
 
 Player.prototype._d_laser = function (px,py,mx,my) {
-    ctx.beginPath();
-    ctx.moveTo(px, py);
-    ctx.lineTo(mx, my);
-    ctx.strokeStyle = "red";
-    ctx.stroke();
+    buffer.beginPath();
+    buffer.moveTo(px, py);
+    buffer.lineTo(mx, my);
+    buffer.strokeStyle = "red";
+    buffer.stroke();
 };
 Player.prototype._a_idle = function (px,py,mx,my) {
     RIFLE.IDLE.tickCount += 1;
@@ -85,10 +85,10 @@ Player.prototype._a_bult = function (px,py,mx,my) {
         RIFLE.FIRE.tickColorCount=0;
         RIFLE.FIRE.flipColor();
     }
-    ctx.beginPath();
-    ctx.moveTo(px.x, py.y);
-    ctx.lineTo(mx, my);
-    ctx.strokeStyle = RIFLE.FIRE.color;
-    ctx.stroke();
+    buffer.beginPath();
+    buffer.moveTo(px.x, py.y);
+    buffer.lineTo(mx, my);
+    buffer.strokeStyle = RIFLE.FIRE.color;
+    buffer.stroke();
 };
 //Player.prototype = Object.create(BaseCharacter.prototype);

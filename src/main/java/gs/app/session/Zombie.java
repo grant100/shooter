@@ -1,18 +1,16 @@
 package gs.app.session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Zombie {
     Double x;
     Double y;
-    Integer height = 10;
-    Integer width = 10;
-    Integer speed = 5;
+    Double height = 10.0;
+    Double width = 10.0;
+    Double speed = 5.0;
     Double coeff;// = .05;
     Boolean isChasing = false;
+    PlayerSession target;
 
     public Zombie(Double x, Double y){
         this.x = x;
@@ -36,27 +34,27 @@ public class Zombie {
         this.y = y;
     }
 
-    public Integer getHeight() {
+    public Double getHeight() {
         return height;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(Double height) {
         this.height = height;
     }
 
-    public Integer getWidth() {
+    public Double getWidth() {
         return width;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(Double width) {
         this.width = width;
     }
 
-    public Integer getSpeed() {
+    public Double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(Integer speed) {
+    public void setSpeed(Double speed) {
         this.speed = speed;
     }
 
@@ -71,11 +69,21 @@ public class Zombie {
     public void isChasing(Boolean isChasing){
         this.isChasing =isChasing;
     }
+    public void setTarget(PlayerSession target){
+        this.target = target;
+    }
 
 
-    public void follow(PlayerSession player){
-        Double deltax = player.getX() - this.x;
-        Double deltay = player.getY() - this.y;
+    public Double getTargetX(){
+        return this.target.getX();
+    }
+
+    public Double getTargetY(){
+        return this.target.getY();
+    }
+    public void follow(){
+        Double deltax = this.target.getX() - this.x;
+        Double deltay = this.target.getY() - this.y;
 
         this.x = this.x + (this.coeff*deltax);
         this.y = this.y + (this.coeff*deltay);
@@ -83,21 +91,26 @@ public class Zombie {
 
     public static void setChase(List<Zombie> zombies, List<PlayerSession> players){
         for(Zombie zombie : zombies){
-            /*if(!zombie.isChasing() && player != null){
-                zombie.follow(player);
+            if(!zombie.isChasing()){
+                PlayerSession player = findNearest(zombie,players);
+                zombie.setTarget(player);
+                zombie.follow();
                 zombie.isChasing(true);
-            }*/
-            PlayerSession player = findNearest(zombie,players);
+            }else{
+                zombie.follow();
+            }
         }
     }
 
     public static PlayerSession findNearest(Zombie zombie, List<PlayerSession> players){
-        HashMap<Double,Object> distances = new HashMap<>();
+        TreeMap<Double,PlayerSession> distances = new TreeMap<>();
         for(PlayerSession player : players){
             Double deltax = player.getX() - zombie.getX();
             Double deltay = player.getY() - zombie.getY();
             Double distance = Math.sqrt((deltax*deltax)+(deltay*deltay));
             distances.put(distance,player);
         }
+
+        return distances.firstEntry().getValue();
     }
 }

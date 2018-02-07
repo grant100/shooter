@@ -2,20 +2,27 @@ package gs.app.session;
 
 import gs.app.messages.Input;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlayerSession {
-    Integer x = 1024 / 2;
-    Integer y = 1024 / 2;
-    Integer height = 10;
-    Integer width = 10;
-    Integer mouseX;
-    Integer mouseY;
-    Integer clickX;
-    Integer clickY;
+    Double x = 1024.0;
+    Double y = 1024.0;
+    Double height = 10.0;
+    Double width = 10.0;
+    Double mouseX;
+    Double mouseY;
+    Double clickX;
+    Double clickY;
     Boolean melee;
     Boolean click;
     Boolean collision;
-    Integer speed = 5;
+    Double speed = 5.0;
     String id;
+
+
+    List<Bullet> bullets = new ArrayList<>();
+
 
 
     private Input input;
@@ -23,7 +30,7 @@ public class PlayerSession {
         this.id = id;
     }
 
-    public Integer getSpeed(){
+    public Double getSpeed(){
         return this.speed;
     }
     public String getId() {
@@ -34,27 +41,27 @@ public class PlayerSession {
         return this.input;
     }
 
-    public Integer getX(){
+    public Double getX(){
         return this.x;
     }
 
-    public Integer getY() {
+    public Double getY() {
         return this.y;
     }
 
-    public Integer getMouseY() {
+    public Double getMouseY() {
         return mouseY;
     }
 
-    public Integer getMouseX() {
+    public Double getMouseX() {
         return mouseX;
     }
 
-    public Integer getClickY() {
+    public Double getClickY() {
         return clickY;
     }
 
-    public Integer getClickX() {
+    public Double getClickX() {
         return clickX;
     }
 
@@ -78,11 +85,23 @@ public class PlayerSession {
         this.collision = collision;
     }
 
+
+    public List<Bullet> getBullets() {
+        return bullets;
+    }
+
+    public void setBullets(List<Bullet> bullets) {
+        this.bullets = bullets;
+    }
+
     public void process() {
         this.mouseX = input.getMouseX();
         this.mouseY = input.getMouseY();
         this.melee = input.getMelee();
         this.click = input.getClick();
+        if(input.getClick()){
+            bullets.add(new Bullet(this.x,this.y,this.mouseX,this.mouseY));
+        }
 
         if (input.getClick()) {
             this.clickX = input.getClickX();
@@ -104,5 +123,13 @@ public class PlayerSession {
         if(input.getRight()){
             this.x+=speed;
         }
+
+        this.bullets.removeIf(obj->obj.getTtl()<1);
+
+        for(Bullet bullet : this.bullets){
+            bullet.setTtl(bullet.getTtl()-1);
+            bullet.shift();
+        }
     }
 }
+
