@@ -6,8 +6,8 @@ public class Bullet{
     Double fy;
     Double tx;
     Double ty;
-    Double ttl = 100.0;
-    Double rate = 10.0;
+    Double ttl = 150.0;
+    Double rate = 50.0;
 
     public Bullet(Double fx,Double fy,Double tx,Double ty){
         this.fx = fx;

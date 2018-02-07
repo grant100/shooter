@@ -89,7 +89,7 @@ public class Zombie {
         this.y = this.y + (this.coeff*deltay);
     }
 
-    public static void setChase(List<Zombie> zombies, List<PlayerSession> players){
+    public static synchronized void setChase(List<Zombie> zombies, List<PlayerSession> players){
         for(Zombie zombie : zombies){
             if(!zombie.isChasing()){
                 PlayerSession player = findNearest(zombie,players);

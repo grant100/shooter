@@ -10,6 +10,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 
@@ -29,5 +30,12 @@ public class ApplicationConfig extends AbstractWebSocketMessageBrokerConfigurer 
         registry.addEndpoint("/game-stomp").addInterceptors(new HttpSessionHandshakeInterceptor()).withSockJS();//.addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(102400* 2048);
+        registration.setSendBufferSizeLimit(102400 * 2048);
+        registration.setSendTimeLimit(2000);
+    }
 }
 

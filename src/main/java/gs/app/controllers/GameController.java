@@ -8,6 +8,9 @@ import gs.app.session.Zombie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.converter.MessageConversionException;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -30,7 +33,7 @@ public class GameController {
 
 
     ArrayList<PlayerSession> playerSessions = new ArrayList<>();
-    List<Zombie> zombies = new ArrayList<>();
+    volatile List<Zombie> zombies = new ArrayList<>();
 
     @RequestMapping("/")
     public String index(){
@@ -40,6 +43,8 @@ public class GameController {
     @Autowired
     public SimpMessageSendingOperations messagingTemplate;
 
+
+    @MessageExceptionHandler({MessageConversionException.class,MessageDeliveryException.class})
     @MessageMapping("/position-updates")
     @SendTo("/topic/position-updates")
     public PlayerSession positionUpdates(Input input,SimpMessageHeaderAccessor accessor) throws Exception {

@@ -21,7 +21,7 @@ public class PlayerSession {
     String id;
 
 
-    List<Bullet> bullets = new ArrayList<>();
+    volatile List<Bullet> bullets = new ArrayList<>();
 
 
 
@@ -94,7 +94,7 @@ public class PlayerSession {
         this.bullets = bullets;
     }
 
-    public void process() {
+    synchronized public void  process() {
         this.mouseX = input.getMouseX();
         this.mouseY = input.getMouseY();
         this.melee = input.getMelee();
@@ -124,12 +124,14 @@ public class PlayerSession {
             this.x+=speed;
         }
 
+
         this.bullets.removeIf(obj->obj.getTtl()<1);
 
         for(Bullet bullet : this.bullets){
             bullet.setTtl(bullet.getTtl()-1);
             bullet.shift();
         }
+
     }
 }
 
