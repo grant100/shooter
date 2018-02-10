@@ -64,8 +64,6 @@ function init() {
     canvas.width = 2048;
     canvas.height = 2048;
     parent.appendChild(canvas);
-    //image = new Image();
-    //image.src = "/images/bender.jpg";
 
     player = new Player('grant');
     var chaser1 = new Chaser('zombiz', 1, .01);
@@ -79,11 +77,6 @@ function init() {
     chaser3.y = 1024;
     enemiz.push(chaser2, chaser1,chaser3);
 
-    /*$("canvas").mousemove(function (event) {
-        mouse.x = event.pageX;
-        mouse.y = event.pageY;
-        //player.draw();
-    });*/
 
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
@@ -113,8 +106,7 @@ function move() {
     }
 
     ctx.clearRect(0, 0, canvas.height, canvas.width);
-    //wctx.fillStyle = 'red';
-    //ctx.fillRect(player.x, player.y, player.w, player.h);
+
     drawBullets();
     player._d_laser();
     drawEnemies();

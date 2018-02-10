@@ -2,9 +2,7 @@ var stompClient = null;
 var stompConnct = false;
 var parent = null;
 var canvas = null;
-var canvas2 = null;
 var ctx = null;
-var buffer = null;
 var id = null;
 var chaser = null;
 var player = null;
@@ -138,18 +136,11 @@ function init() {
     canvas.height = 2048;
     parent.appendChild(canvas);
 
-
-    canvas2 = document.createElement("canvas");
-    buffer = canvas.getContext("2d");
-    canvas2.width = canvas.width;
-    canvas2.height = canvas.height;
-
     document.addEventListener('mousemove', msm, false);
     document.addEventListener('mousedown', mdn, false);
     document.addEventListener('mouseup', mup, false);
     document.addEventListener('keydown', kps, false);
     document.addEventListener('keyup', krs, false);
-    //document.body.appendChild(canvas);
 
     player = new Player('grant');
     chaser = new Chaser('model');
@@ -230,7 +221,6 @@ function render() {
         drawBullets();
         drawTeam();
         drawPlayer(positionUpdates);
-        ctx.drawImage(canvas2,0,0);
     }
     requestAnimationFrame(render);
 }

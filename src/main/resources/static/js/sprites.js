@@ -1,74 +1,39 @@
-var  RIFLE= {
-    IDLE: {
-        FRAME: [
-            "/images/shooter/rifle/idle/survivor-idle_rifle_0.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_1.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_2.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_3.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_4.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_5.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_6.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_7.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_8.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_9.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_10.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_11.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_12.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_13.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_14.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_15.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_16.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_17.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_18.png",
-            "/images/shooter/rifle/idle/survivor-idle_rifle_19.png"
-        ],
-        tickCount :0,
-        ticksPerFrame : 2,
-        frameCount:0
+function Rifle(){
 
-    },
-    MELE:{
-        FRAME:[
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_0.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_1.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_2.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_3.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_4.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_5.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_6.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_7.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_8.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_9.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_10.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_11.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_12.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_13.png",
-            "/images/shooter/rifle/meleeattack/survivor-meleeattack_rifle_14.png"
-        ],
-        tickCount :0,
-        ticksPerFrame : 1,
-        frameCount:0
-    },
-    FIRE:{
-        FRAME:[
-            "/images/shooter/rifle/shoot/survivor-shoot_rifle_0.png",
-            "/images/shooter/rifle/shoot/survivor-shoot_rifle_1.png",
-            "/images/shooter/rifle/shoot/survivor-shoot_rifle_2.png"
-            ],
-        tickCount :0,
-        ticksPerFrame : 1,
-        frameCount:0,
+     this.idle ={
+        img : new Image(),
+        src : "/images/rifle_idle.png",
+        y : 10,
+        x : [237, 2280, 464, 691, 918, 1145, 1372, 1599, 1826, 2053, 10, 2507, 2734, 2961, 3188, 3415, 3642, 3869, 4096, 4323],
+        w : 207,
+        h : 313,
+        frame : 0,
+        ticks_per_frame : 2,
+        ticks : 0
+    };
 
-        tickColorCount:0,
-        ticksColorPerFrame:5,
-        color:"red",
-        flipColor : function () {
-            if(RIFLE.FIRE.color==="red"){
-                RIFLE.FIRE.color="orange";
-            }else{
-                RIFLE.FIRE.color="red";
-            }
-        }
-    }
+    this.recoil = {
+        img : new Image(),
+        src : "/images/rifle_recoil.png",
+        y : 10,
+        x : [10,236,462],
+        w : 206,
+        h : 312,
+        frame : 0,
+        ticks_per_frame : 1,
+        ticks : 0
+    };
 
-};
+    this.melee = {
+        img : new Image(),
+        src : "/images/rifle_melee.png",
+        y : 10,
+        x : [383,2621,756,1129,1502,1875,2248,10,2994,3367,3740,4113,4486,4859,5232],
+        w : 353,
+        h : 358,
+        frame : 0,
+        ticks_per_frame : 1,
+        ticks : 0
+    };
+}
+
