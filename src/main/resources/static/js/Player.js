@@ -41,40 +41,17 @@ Player.prototype._d_laser = function (px,py,mx,my) {
     ctx.stroke();
 };
 Player.prototype._a_idle = function (px,py,mx,my) {
-    this.rifle.idle.ticks+=1;
-    if (this.rifle.idle.ticks > this.rifle.idle.ticks_per_frame) {
-        this.rifle.idle.ticks = 0;
-        this.rifle.idle.frame += 1;
-        if (this.rifle.idle.frame > 18) {
-            this.rifle.idle.frame = 0;
-        }
-    }
+    this.rifle.idle.setAnimationFrame();
     this._d_draw(px,py,mx,my,this.rifle.idle);
 };
 Player.prototype._a_mele = function (px,py,mx,my)  {
-    this.rifle.melee.ticks+=1;
-    if (this.rifle.melee.ticks > this.rifle.melee.ticks_per_frame) {
-        this.rifle.melee.ticks = 0;
-        this.rifle.melee.frame += 1;
-        if (this.rifle.melee.frame > 14) {
-            this.rifle.melee.frame = 0;
-        }
-    }
+    this.rifle.melee.setAnimationFrame();
     this._d_draw(px,py,mx,my,this.rifle.melee);
 };
 Player.prototype._a_recl = function (px,py,mx,my)  {
-    this.rifle.recoil.ticks+=1;
-    if (this.rifle.recoil.ticks > this.rifle.recoil.ticks_per_frame) {
-        this.rifle.recoil.ticks = 0;
-        this.rifle.recoil.frame += 1;
-        if (this.rifle.recoil.frame > 2) {
-            this.rifle.recoil.frame = 0;
-        }
-    }
-
+    this.rifle.recoil.setAnimationFrame();
     this._a_bult(px,py,mx,my);
     this._d_draw(px,py,mx,my,this.rifle.recoil);
-
 };
 
 Player.prototype._a_bult = function (px,py,mx,my) {

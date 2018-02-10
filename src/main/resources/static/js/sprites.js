@@ -1,5 +1,6 @@
 function Rifle(){
 
+     // animations
      this.idle ={
         img : new Image(),
         src : "/images/rifle_idle.png",
@@ -8,8 +9,19 @@ function Rifle(){
         w : 207,
         h : 313,
         frame : 0,
+        frame_max : 18,
         ticks_per_frame : 2,
-        ticks : 0
+        ticks : 0,
+        setAnimationFrame : function(){
+            this.ticks+=1;
+            if (this.ticks > this.ticks_per_frame) {
+                this.ticks = 0;
+                this.frame += 1;
+                if (this.frame > this.frame_max) {
+                    this.frame = 0;
+                }
+            }
+        }
     };
 
     this.recoil = {
@@ -20,8 +32,19 @@ function Rifle(){
         w : 206,
         h : 312,
         frame : 0,
+        frame_max : 2,
         ticks_per_frame : 1,
-        ticks : 0
+        ticks : 0,
+        setAnimationFrame: function(){
+            this.ticks+=1;
+            if (this.ticks > this.ticks_per_frame) {
+                this.ticks = 0;
+                this.frame += 1;
+                if (this.frame > this.frame_max) {
+                    this.frame = 0;
+                }
+            }
+        }
     };
 
     this.melee = {
@@ -32,8 +55,19 @@ function Rifle(){
         w : 353,
         h : 358,
         frame : 0,
+        frame_max : 14,
         ticks_per_frame : 1,
-        ticks : 0
+        ticks : 0,
+        setAnimationFrame: function(){
+            this.ticks+=1;
+            if (this.ticks > this.ticks_per_frame) {
+                this.ticks = 0;
+                this.frame += 1;
+                if (this.frame > this.frame_max) {
+                    this.frame = 0;
+                }
+            }
+        }
     };
 }
 
