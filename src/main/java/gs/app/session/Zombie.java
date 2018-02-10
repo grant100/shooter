@@ -10,7 +10,7 @@ public class Zombie {
     Double speed = 5.0;
     Double coeff;// = .05;
     Boolean isChasing = false;
-    PlayerSession target;
+    Player target;
 
     public Zombie(Double x, Double y){
         this.x = x;
@@ -69,7 +69,7 @@ public class Zombie {
     public void isChasing(Boolean isChasing){
         this.isChasing =isChasing;
     }
-    public void setTarget(PlayerSession target){
+    public void setTarget(Player target){
         this.target = target;
     }
 
@@ -89,10 +89,10 @@ public class Zombie {
         this.y = this.y + (this.coeff*deltay);
     }
 
-    public static synchronized void setChase(List<Zombie> zombies, List<PlayerSession> players){
+    public static synchronized void setChase(List<Zombie> zombies, List<Player> players){
         for(Zombie zombie : zombies){
             if(!zombie.isChasing()){
-                PlayerSession player = findNearest(zombie,players);
+                Player player = findNearest(zombie,players);
                 zombie.setTarget(player);
                 zombie.follow();
                 zombie.isChasing(true);
@@ -102,9 +102,9 @@ public class Zombie {
         }
     }
 
-    public static PlayerSession findNearest(Zombie zombie, List<PlayerSession> players){
-        TreeMap<Double,PlayerSession> distances = new TreeMap<>();
-        for(PlayerSession player : players){
+    public static Player findNearest(Zombie zombie, List<Player> players){
+        TreeMap<Double,Player> distances = new TreeMap<>();
+        for(Player player : players){
             Double deltax = player.getX() - zombie.getX();
             Double deltay = player.getY() - zombie.getY();
             Double distance = Math.sqrt((deltax*deltax)+(deltay*deltay));

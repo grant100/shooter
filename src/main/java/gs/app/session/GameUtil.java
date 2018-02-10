@@ -1,9 +1,7 @@
 package gs.app.session;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GameUtil {
     public static void generateZombie(List<Zombie> zombies){
@@ -12,7 +10,7 @@ public class GameUtil {
         }
     }
 
-    public static Boolean collisionCheck(PlayerSession player, List<Zombie> zombies){
+    public static Boolean collisionCheck(Player player, List<Zombie> zombies){
         Boolean isCollision = false;
         for(Zombie zombie:zombies){
             Boolean collision  = isCollision(player,zombie);
@@ -24,7 +22,7 @@ public class GameUtil {
         return isCollision;
     }
 
-    private static Boolean isCollision(PlayerSession player, Zombie zombie){
+    private static Boolean isCollision(Player player, Zombie zombie){
         return !(((player.y + player.height) < (zombie.y)) ||
                   (player.y > (zombie.y + zombie.height)) ||
                   ((player.x + player.width) < zombie.x) ||
@@ -32,9 +30,9 @@ public class GameUtil {
         );
     }
 
-    public static List excludePlayer(List<PlayerSession> players, PlayerSession player){
-        List<PlayerSession> teamList = new ArrayList<>();
-        for(PlayerSession teamPlayer : players){
+    public static List excludePlayer(List<Player> players, Player player){
+        List<Player> teamList = new ArrayList<>();
+        for(Player teamPlayer : players){
             if(!teamPlayer.getId().equals(player.getId())){
                 teamList.add(teamPlayer);
             }
@@ -42,9 +40,9 @@ public class GameUtil {
         return teamList;
     }
 
-    public static List getBullets(List<PlayerSession> players){
+    public static List getBullets(List<Player> players){
         List<Bullet> bullets = new ArrayList<>();
-        for(PlayerSession player : players){
+        for(Player player : players){
             bullets.addAll(player.getBullets());
         }
 

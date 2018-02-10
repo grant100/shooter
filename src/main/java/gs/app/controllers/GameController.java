@@ -3,11 +3,9 @@ package gs.app.controllers;
 import gs.app.messages.Input;
 import gs.app.session.Bullet;
 import gs.app.session.GameUtil;
-import gs.app.session.PlayerSession;
+import gs.app.session.Player;
 import gs.app.session.Zombie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.converter.MessageConversionException;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -17,14 +15,10 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.filter.RequestContextFilter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.management.BufferPoolMXBean;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @SessionAttributes("PlayerSession")
@@ -32,7 +26,7 @@ import java.util.Map;
 public class GameController {
 
 
-    ArrayList<PlayerSession> playerSessions = new ArrayList<>();
+    ArrayList<Player> players = new ArrayList<>();
     volatile List<Zombie> zombies = new ArrayList<>();
 
     @RequestMapping("/")
@@ -47,18 +41,18 @@ public class GameController {
     @MessageExceptionHandler({MessageConversionException.class,MessageDeliveryException.class})
     @MessageMapping("/position-updates")
     @SendTo("/topic/position-updates")
-    public PlayerSession positionUpdates(Input input,SimpMessageHeaderAccessor accessor) throws Exception {
-      PlayerSession player = (PlayerSession)accessor.getSessionAttributes().get("PlayerSession");
+    public Player positionUpdates(Input input, SimpMessageHeaderAccessor accessor) throws Exception {
+      Player player = (Player)accessor.getSessionAttributes().get("Player");
       player.setInput(input);
       player.process();
 
       // TODO refine game mechanics
       GameUtil.generateZombie(zombies);
-      Zombie.setChase(zombies, playerSessions);
+      Zombie.setChase(zombies, players);
       messagingTemplate.convertAndSend("/topic/enemy-updates",zombies);
-      List teamList = GameUtil.excludePlayer(playerSessions,player);
+      List teamList = GameUtil.excludePlayer(players,player);
       messagingTemplate.convertAndSend("/topic/team-updates",teamList);
-      List<Bullet> bullets = GameUtil.getBullets(playerSessions);
+      List<Bullet> bullets = GameUtil.getBullets(players);
         messagingTemplate.convertAndSend("/topic/bullet-updates",bullets);
       player.setCollision(GameUtil.collisionCheck(player,zombies));
 
@@ -66,9 +60,9 @@ public class GameController {
     }
 
     @ModelAttribute("PlayerSession")
-    public PlayerSession getPlayer(HttpServletRequest request){
-        PlayerSession player = new PlayerSession(request.getSession().getId());
-        playerSessions.add(player);
+    public Player getPlayer(HttpServletRequest request){
+        Player player = new Player(request.getSession().getId());
+        players.add(player);
         return player;
     }
 }

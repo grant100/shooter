@@ -5,7 +5,7 @@ import gs.app.messages.Input;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerSession {
+public class Player {
     Double x = 1024.0;
     Double y = 1024.0;
     Double height = 10.0;
@@ -26,7 +26,7 @@ public class PlayerSession {
 
 
     private Input input;
-    public PlayerSession(String id) {
+    public Player(String id) {
         this.id = id;
     }
 
@@ -124,7 +124,7 @@ public class PlayerSession {
             this.x+=speed;
         }
 
-
+        // this may have an issue... ?
         this.bullets.removeIf(obj->obj.getTtl()<1);
 
         for(Bullet bullet : this.bullets){
