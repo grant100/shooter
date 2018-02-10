@@ -4,9 +4,8 @@ var parent = null;
 var canvas = null;
 var ctx = null;
 var id = null;
-var chaser = null;
+var zombie = null;
 var player = null;
-var bullet = null;
 var initialized = false;
 var positionUpdates = null;
 var enemyUpdates = null;
@@ -142,9 +141,8 @@ function init() {
     document.addEventListener('keydown', kps, false);
     document.addEventListener('keyup', krs, false);
 
-    player = new Player('grant');
-    chaser = new Chaser('model');
-    bullet = new Bullet();
+    player = new Player();
+    zombie = new Zombie('model');
 
     Key.STATE[Key.UP] = false;
     Key.STATE[Key.DOWN] = false;
@@ -196,7 +194,7 @@ function move() {
 function drawEnemies(){
     for (var i = 0; i < enemyUpdates.length; i++) {
         var enemy = enemyUpdates[i];
-        chaser.draw(enemy.x,enemy.y,enemy.targetX, enemy.targetY);
+        zombie._d_draw(enemy.x,enemy.y,enemy.targetX, enemy.targetY);
     }
 }
 
@@ -210,7 +208,7 @@ function drawTeam(){
 function drawBullets(){
     for (var i = 0; i < bulletUpdates.length; i++) {
         var b = bulletUpdates[i];
-        bullet._b_draw(b.fx,b.fy,5,5);
+        player._b_draw(b.fx,b.fy,5,5);
     }
 }
 function render() {
@@ -231,7 +229,6 @@ function drawPlayer(args){
         player._a_mele(args.x, args.y, args.mouseX, args.mouseY);
     }else if(args.click){
         //player.fire(player.x, player.y, positionUpdates.mouseX, positionUpdates.mouseY);
-
         player._a_recl(args.x, args.y,args.mouseX, args.mouseY);
     }else{
         player._a_idle(args.x, args.y,args.mouseX, args.mouseY);

@@ -12,6 +12,7 @@ function Rifle(){
         frame_max : 18,
         ticks_per_frame : 2,
         ticks : 0,
+        scale:.25,
         setAnimationFrame : function(){
             this.ticks+=1;
             if (this.ticks > this.ticks_per_frame) {
@@ -35,6 +36,7 @@ function Rifle(){
         frame_max : 2,
         ticks_per_frame : 1,
         ticks : 0,
+        scale:.25,
         setAnimationFrame: function(){
             this.ticks+=1;
             if (this.ticks > this.ticks_per_frame) {
@@ -58,6 +60,7 @@ function Rifle(){
         frame_max : 14,
         ticks_per_frame : 1,
         ticks : 0,
+        scale:.25,
         setAnimationFrame: function(){
             this.ticks+=1;
             if (this.ticks > this.ticks_per_frame) {
@@ -70,4 +73,18 @@ function Rifle(){
         }
     };
 }
+
+Rifle.prototype.setLaser =function(px,py,mx,my){
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(mx, my);
+    ctx.strokeStyle = "red";
+    ctx.stroke();
+};
+
+Rifle.prototype._b_draw = function(x,y,h,w){
+    ctx.fillStyle="yellow";
+    ctx.fillRect(x,y,h,w);
+};
+
 
