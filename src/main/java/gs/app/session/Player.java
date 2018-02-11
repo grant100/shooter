@@ -19,7 +19,9 @@ public class Player {
     Boolean collision;
     Double speed = 5.0;
     String id;
-
+    String name;
+    Integer gid; // game id
+    Boolean joined = false;
 
     volatile List<Bullet> bullets = new ArrayList<>();
 
@@ -29,7 +31,22 @@ public class Player {
     public Player(String id) {
         this.id = id;
     }
+    public String getName(){return this.name;};
+    public void setName(String name){this.name = name;}
+    public void setGID(Integer gid){
+        this.gid = gid;
+    }
 
+    public void setJoined(Boolean joined){
+        this.joined = joined;
+    }
+
+    public Boolean getJoined(){
+        return this.joined;
+    }
+    public Integer getGid(){
+        return this.gid;
+    }
     public Double getSpeed(){
         return this.speed;
     }

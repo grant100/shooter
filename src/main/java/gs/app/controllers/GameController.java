@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@SessionAttributes("PlayerSession")
 @RequestMapping
 public class GameController {
 
@@ -57,12 +56,5 @@ public class GameController {
       player.setCollision(GameUtil.collisionCheck(player,zombies));
 
       return player;
-    }
-
-    @ModelAttribute("PlayerSession")
-    public Player getPlayer(HttpServletRequest request){
-        Player player = new Player(request.getSession().getId());
-        players.add(player);
-        return player;
     }
 }
