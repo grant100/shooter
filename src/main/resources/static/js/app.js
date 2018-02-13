@@ -73,33 +73,6 @@ function connect() {
     }
 }
 
-function getGames(){
-    $.ajax({
-        url: "/games"
-    })
-        .done(function( data ) {
-        console.log( "Sample of data:", data.slice( 0, 100 ) );
-    });
-}
-
-function join(){
-    $.ajax({
-        url: "/join"
-    })
-        .done(function( data ) {
-            console.log( "Sample of data:", data.slice( 0, 100 ) );
-        });
-}
-
-function leave(){
-    $.ajax({
-        url: "/leave"
-    })
-        .done(function( data ) {
-            console.log( "Sample of data:", data.slice( 0, 100 ) );
-        });
-}
-
 function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect();
