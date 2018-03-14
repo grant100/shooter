@@ -46,7 +46,7 @@ public class GameController {
       player.process();
 
       // TODO refine game mechanics
-      GameUtil.generateZombie(zombies);
+      //GameUtil.generateZombie(zombies);
       //Zombie.setChase(zombies, players);
       messagingTemplate.convertAndSend("/topic/enemy-updates",zombies);
       List teamList = GameUtil.excludePlayer(players,player);

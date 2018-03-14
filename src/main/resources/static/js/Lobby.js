@@ -29,24 +29,47 @@ function getGames(){
 }
 
 
-var app = angular.module('StarterApp', ['ngMaterial']);
+var app = angular.module('StarterApp', ['ngMaterial','ngRoute']);
 
-app.controller('AppCtrl', ['$scope', '$http','$mdBottomSheet','$mdSidenav', '$mdDialog', function($scope,$http,$mdBottomSheet, $mdSidenav, $mdDialog){
-
-    $http({
-        method: 'GET',
-        url: '/games'
-    }).then(function (success){
-        console.log(success);
-        $scope.sessions = success.data
-    },function (error){
-
+app.config(function($routeProvider,$locationProvider){
+    $routeProvider.when('/', {
+        templateUrl: 'index.html'
     });
 
-    $scope.toggleSidenav = function(menuId) {
-        $mdSidenav(menuId).toggle();
+    $routeProvider.when('/', {
+        templateUrl: 'index.html'
+    });
+});
+app.controller('AppCtrl', ['$scope', '$http', '$location', function($scope,$http,$location){
+
+
+
+    $scope.join = function(){
+        $http({
+            method: 'GET',
+            url: '/join',
+            data:{name:'Grant'}
+        }).then(function (success){
+           // $scope.join = success.data;
+            $location.path("/");
+        },function (error){
+            console.log(error);
+        });
     };
-    $scope.alert = '';
+
+    $scope.init = function(){
+        $http({
+            method: 'GET',
+            url: '/games'
+        }).then(function (success){
+            console.log(success.data);
+            $scope.games = success.data;
+            $location.path("/lobby.html");
+        },function (error){
+            console.log(error);
+        });
+    };
+
 }]);
 
 app.directive('userAvatar', function() {
