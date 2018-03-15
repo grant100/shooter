@@ -1,6 +1,8 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
-  <lobby-component></lobby-component>
+ <li *ngFor="let session of sessions">
+   {{session.gameId}}
+ </li>
 </div>
 
 
