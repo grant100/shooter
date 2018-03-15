@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {GameService} from "../services/GameService";
-import {Session} from "../models/Session";
+import {Game,} from "../models/Game";
 
 @Component({
   selector: 'lobby-component',
@@ -9,10 +9,10 @@ import {Session} from "../models/Session";
 })
 export class LobbyComponent implements OnInit{
 
-  sessions:Session[];
+  games:Game[];
 
   constructor(private GameService: GameService){}
   ngOnInit(){
-    this.sessions = this.GameService.getSessions();
+    this.games = this.GameService.getGames();
   }
 }

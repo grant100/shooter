@@ -1,12 +1,16 @@
 import {Injectable} from "@angular/core";
-import {Session} from "../models/Session";
+import {Game} from "../models/Game";
+import {HttpClient} from "@angular/common/http";
 
 @Injectable()
 export class GameService{
-  getSessions(): Session[]{
-    let sessions: Session[]=[];
-    sessions.push(new Session(false,1,1));
-    sessions.push(new Session(false,1,2));
-    return sessions;
+
+  constructor(private http: HttpClient){}
+  getGames(): Game[]{
+    let games: Game[]=[];
+    games.push(new Game(false,1,1));
+    games.push(new Game(false,1,2));
+    return games;
   }
 }
+

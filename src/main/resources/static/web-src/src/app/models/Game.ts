@@ -1,4 +1,4 @@
-export class Session{
+export class Game{
   isEmpty:boolean;
   size:number;
   gameId:number;
