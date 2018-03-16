@@ -13,6 +13,7 @@ export class LobbyComponent implements OnInit{
 
   constructor(private GameService: GameService){}
   ngOnInit(){
+    console.log('ngOnInit fired...');
     this.games = this.GameService.getGames();
   }
 }
