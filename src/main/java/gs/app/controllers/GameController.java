@@ -30,7 +30,7 @@ public class GameController {
 
     @RequestMapping("/")
     public String index(){
-        return "index.html";
+        return "/web-build/index.html";
     }
 
     @Autowired
